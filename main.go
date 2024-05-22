@@ -30,6 +30,7 @@ func main() {
 	mux.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("static"))))
 
 	mux.HandleFunc("/api/stripe/create-payment-intent", paymentIntentHandler)
+	mux.HandleFunc("/api/stripe/webhook", webhookHandler)
 	mux.HandleFunc("/", indexHandler)
 
 	http.ListenAndServe("127.0.0.1:8080", mux)
@@ -78,6 +79,27 @@ func paymentIntentHandler(w http.ResponseWriter, r *http.Request) {
 	}{
 		ClientSecret: pi.ClientSecret,
 	})
+}
+
+func webhookHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL)
+	event := stripe.Event{}
+	const MaxBodyBytes = int64(65536)
+	r.Body = http.MaxBytesReader(w, r.Body, MaxBodyBytes)
+	payload, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Println("Error reading request body:", err)
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
+	err = json.Unmarshal(payload, &event)
+	if err != nil {
+		log.Println("error unmarshalling payload:", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	log.Printf("%+v", event)
+	w.WriteHeader(http.StatusAccepted)
 }
 
 func writeJSON(w http.ResponseWriter, v interface{}) {
