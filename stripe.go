@@ -6,9 +6,15 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	stripe "github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/paymentintent"
+)
+
+const (
+	endpointCreatePaymentIntent  = "create-payment-intent"
+	endpointConfirmPaymentIntent = "confirm-payment-intent"
 )
 
 type Item struct {
@@ -19,13 +25,34 @@ type Order struct {
 	Items []Item `json:"items"`
 }
 
-func paymentIntentHandler(w http.ResponseWriter, r *http.Request) {
+func stripeUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.URL)
 	if r.Method != http.MethodPost {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
+	// Determine API call type.
+	parts := strings.Split(strings.TrimPrefix(r.URL.String(), "/"), "/")
+	if len(parts) != 4 {
+		log.Println("invalid request to API: wrong number of parts:", r.URL)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	log.Println(parts[3])
+
+	switch parts[3] {
+	case endpointCreatePaymentIntent:
+		createPaymentIntent(w, r)
+		return
+		// case endpointConfirmPaymentIntent:
+		// 	confirmPaymentIntent(w, r)
+	}
+
+}
+
+func createPaymentIntent(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Println("failed to read body:", err)
@@ -74,6 +101,12 @@ func paymentIntentHandler(w http.ResponseWriter, r *http.Request) {
 		SubTier:      order.Items[0].ID,
 	})
 }
+
+// func confirmPaymentIntent(w http.ResponseWriter, r *http.Request) {
+// 	params := &stripe.PaymentIntentConfirmParams{
+// 		PaymentMethod: stripe.String(stripe.card),
+// 	}
+// }
 
 func webhookHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.URL)

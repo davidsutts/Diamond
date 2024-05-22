@@ -3,19 +3,20 @@ const stripe = Stripe("pk_test_51PIs0SBMOG016JWArix63qJB4gc7bJxcOvrQzf3KHZa84osO
 
 let elements;
 
-initialize();
-checkStatus();
-
-document
-	.querySelector("#payment-form")
-	.addEventListener("submit", handleSubmit);
+document.addEventListener("DOMContentLoaded", () => {
+	document
+		.getElementById("submit")
+		.addEventListener("click", handleSubmit);
+	initialize();
+	checkStatus();
+})
 
 // Fetches a payment intent and captures the client secret
 async function initialize() {
 	const params = new URLSearchParams(window.location.search);
 	const items = [{ id: params.get("tier") }];
 
-	const response = await fetch("/api/stripe/create-payment-intent", {
+	const response = await fetch("/api/stripe/updates/create-payment-intent", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ items }),
@@ -41,13 +42,15 @@ async function initialize() {
 
 async function handleSubmit(e) {
 	e.preventDefault();
+	e.stopImmediatePropagation();
+	console.log("submitting")
 	setLoading(true);
 
 	const { error } = await stripe.confirmPayment({
 		elements,
 		confirmParams: {
 			// Make sure to change this to your payment completion page
-			return_url: "/signup",
+			return_url: "http://localhost:8080/",
 		},
 	});
 
@@ -72,6 +75,7 @@ async function checkStatus() {
 	);
 
 	if (!clientSecret) {
+		console.log("doing something because not client secret")
 		return;
 	}
 

@@ -24,7 +24,7 @@ func main() {
 	// Redirect file requests to static dir.
 	mux.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("static"))))
 
-	mux.HandleFunc("/api/stripe/create-payment-intent", paymentIntentHandler)
+	mux.HandleFunc("/api/stripe/updates/", stripeUpdateHandler)
 	mux.HandleFunc("/api/stripe/webhook", webhookHandler)
 	mux.HandleFunc("/signup", signupHandler)
 	mux.HandleFunc("/checkout", checkoutHandler)
