@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "description": "A simple webapp that handles subscription handling using the stripe API.",
   "main": "main.go",
+  "type": "module",
   "scripts": {
-    "test": "go run ./"
+    "build:watch": "concurrently \"rollup -c --watch\" \"tailwindcss -i ./src/styles/main.css -o ./static/build/tw.css --watch\" \"twlit --input ./static/build/tw.css --output ./ts/modules/twlit.js\""
   },
   "repository": {
     "type": "git",
@@ -17,6 +18,13 @@
   },
   "homepage": "https://github.com/davidsutts/diamond#readme",
   "devDependencies": {
-    "tailwindcss": "^3.4.3"
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "rollup": "^4.17.2",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "lit": "^3.1.3"
   }
 }
