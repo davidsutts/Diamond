@@ -29,7 +29,7 @@ func main() {
 	// Redirect file requests to static dir.
 	mux.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("static"))))
 
-	mux.HandleFunc("/create-payment-intent", paymentIntentHandler)
+	mux.HandleFunc("/api/stripe/create-payment-intent", paymentIntentHandler)
 	mux.HandleFunc("/", indexHandler)
 
 	http.ListenAndServe("127.0.0.1:8080", mux)
