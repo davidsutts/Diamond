@@ -1,0 +1,22 @@
+{
+  "name": "diamond",
+  "version": "0.1.0",
+  "description": "A simple webapp that handles subscription handling using the stripe API.",
+  "main": "main.go",
+  "scripts": {
+    "test": "go run ./"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidsutts/diamond.git"
+  },
+  "author": "David Sutton",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davidsutts/diamond/issues"
+  },
+  "homepage": "https://github.com/davidsutts/diamond#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.3"
+  }
+}
