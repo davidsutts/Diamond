@@ -6,11 +6,18 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strings"
 
 	stripe "github.com/stripe/stripe-go"
 	"github.com/stripe/stripe-go/paymentintent"
 )
+
+type Item struct {
+	ID string `json:"id"`
+}
+
+type Order struct {
+	Items []Item `json:"items"`
+}
 
 func paymentIntentHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.URL)
@@ -19,18 +26,31 @@ func paymentIntentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse the incoming request.
-	err := r.ParseForm()
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Println("failed to parse form:", err)
+		log.Println("failed to read body:", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	products := strings.Split(r.FormValue("products"), ",")
+	var order Order
+
+	// Unmarshal the JSON data into the struct
+	err = json.Unmarshal([]byte(body), &order)
+	if err != nil {
+		log.Fatalf("Error unmarshalling JSON: %v", err)
+	}
+	log.Printf("%+v", order)
+
+	cost := calcAmount(order.Items[0].ID)
+	if cost == 0 {
+		log.Println("invalid product")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
 	params := stripe.PaymentIntentParams{
-		Amount:   stripe.Int64(calcAmount(products)),
+		Amount:   stripe.Int64(cost),
 		Currency: stripe.String(string(stripe.CurrencyAUD)),
 	}
 
@@ -45,8 +65,10 @@ func paymentIntentHandler(w http.ResponseWriter, r *http.Request) {
 	// Write client secret to response writer.
 	writeJSON(w, struct {
 		ClientSecret string `json:"clientSecret"`
+		OrderTotal   int64  `json:"orderTotal"`
 	}{
 		ClientSecret: pi.ClientSecret,
+		OrderTotal:   cost,
 	})
 }
 
@@ -85,6 +107,16 @@ func writeJSON(w http.ResponseWriter, v interface{}) {
 	}
 }
 
-func calcAmount(product []string) int64 {
-	return 1500
+const premiumSubscription = "prem"
+const superSubscription = "super"
+
+func calcAmount(product string) int64 {
+	switch product {
+	case premiumSubscription:
+		return 599 // $5.99
+	case superSubscription:
+		return 1099 // $10.99
+	default:
+		return 0
+	}
 }

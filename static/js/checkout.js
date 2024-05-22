@@ -1,9 +1,6 @@
 // This is your test publishable API key.
 const stripe = Stripe("pk_test_51PIs0SBMOG016JWArix63qJB4gc7bJxcOvrQzf3KHZa84osOxmdQ2DbtzZHDVkWhDfPea2mV0eg2lzzNhINPYiGX0044STMN95");
 
-// The items the customer wants to buy
-const items = [{ id: "xl-tshirt" }];
-
 let elements;
 
 initialize();
@@ -15,6 +12,10 @@ document
 
 // Fetches a payment intent and captures the client secret
 async function initialize() {
+	const params = new URLSearchParams(window.location.search);
+	const items = [{ id: params.get("tier") }];
+	console.log(items)
+
 	const response = await fetch("/api/stripe/create-payment-intent", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
