@@ -14,5 +14,5 @@ function submit(e) {
 
 	const query = new URLSearchParams(data).toString();
 
-	window.location.href = "/?" + query;
+	window.location.href = "/checkout?" + query;
 }
