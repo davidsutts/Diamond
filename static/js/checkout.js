@@ -29,8 +29,8 @@ async function initialize() {
 	elements = stripe.elements({ appearance, clientSecret });
 
 	const paymentElementOptions = {
-		layout: "tabs",
-	};
+		layout: "tabs"
+	} 
 
 	const paymentElement = elements.create("payment", paymentElementOptions);
 	paymentElement.mount("#payment-element");

@@ -6,8 +6,25 @@
 	<title>Home</title>
 	<link href="/static/build/tw.css" rel="stylesheet">
 </head>
-<body class="bg-slate-900 min-h-screen flex flex-col items-center gap-10 pt-52">
-	<h1 class="text-white text-7xl font-extrabold">WELCOME TO DIAMOND</h1>
-	<a href="/signup"><button class="bg-blue-100 rounded-md p-5 text-2xl font-bold">Sign Up Now</button></a>
+<body class="bg-slate-900 min-h-screen flex flex-col justify-center items-center">
+	<header class="fixed top-0 left-0 w-screen bg-slate-800 h-fit border-b-2 border-slate-500">
+		<div class="flex px-8 justify-between pt-5 pb-2 items-end">
+				<div class="flex flex-col gap-5">
+					<h1 class="text-3xl text-blue-100 font-black">Diamond</h1>
+					<nav class="flex gap-5 h-full items-end">
+						<a href="/home" class="text-blue-100 font-bold hover:scale-105 duration-75 border-b-2">Home</a>
+						<a href="/signup" class="text-blue-100 font-bold hover:scale-105 duration-75">Plans</a>
+						<a href="/about" class="text-blue-100 font-bold hover:scale-105 duration-75">About</a>
+					</nav>
+				</div>
+				<a id="account-link" href="/login" class="text-blue-100 font-bold hover:scale-105 duration-75">Log in</a>
+			</div>
+		</div>
+	</header>
+	<div id="home-body" class="w-1/2">
+		<div class="bg-blue-100 text-slate-900 p-10">
+			This will contain different object depending on what we need the home page for
+		</div>
+	</div>
 </body>
 </html>
