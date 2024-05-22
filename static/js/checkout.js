@@ -14,17 +14,16 @@ document
 async function initialize() {
 	const params = new URLSearchParams(window.location.search);
 	const items = [{ id: params.get("tier") }];
-	console.log(items)
 
 	const response = await fetch("/api/stripe/create-payment-intent", {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({ items }),
 	});
-	const { clientSecret } = await response.json();
+	const { clientSecret, orderTotal, subTier } = await response.json();
 
 	const appearance = {
-		theme: 'stripe',
+		theme: 'flat',
 	};
 	elements = stripe.elements({ appearance, clientSecret });
 
@@ -34,6 +33,10 @@ async function initialize() {
 
 	const paymentElement = elements.create("payment", paymentElementOptions);
 	paymentElement.mount("#payment-element");
+
+	let product = document.querySelector("#product");
+	product.setAttribute("price", orderTotal / 100);
+	product.setAttribute("tier", subTier);
 }
 
 async function handleSubmit(e) {
@@ -44,7 +47,7 @@ async function handleSubmit(e) {
 		elements,
 		confirmParams: {
 			// Make sure to change this to your payment completion page
-			return_url: "http://localhost:4242/checkout.html",
+			return_url: "/signup",
 		},
 	});
 

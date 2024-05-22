@@ -50,8 +50,9 @@ func paymentIntentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := stripe.PaymentIntentParams{
-		Amount:   stripe.Int64(cost),
-		Currency: stripe.String(string(stripe.CurrencyAUD)),
+		Amount:      stripe.Int64(cost),
+		Currency:    stripe.String(string(stripe.CurrencyAUD)),
+		Description: stripe.String(order.Items[0].ID),
 	}
 
 	pi, err := paymentintent.New(&params)
@@ -66,9 +67,11 @@ func paymentIntentHandler(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, struct {
 		ClientSecret string `json:"clientSecret"`
 		OrderTotal   int64  `json:"orderTotal"`
+		SubTier      string `json:"subTier"`
 	}{
 		ClientSecret: pi.ClientSecret,
 		OrderTotal:   cost,
+		SubTier:      order.Items[0].ID,
 	})
 }
 
@@ -107,7 +110,7 @@ func writeJSON(w http.ResponseWriter, v interface{}) {
 	}
 }
 
-const premiumSubscription = "prem"
+const premiumSubscription = "premium"
 const superSubscription = "super"
 
 func calcAmount(product string) int64 {

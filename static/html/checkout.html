@@ -3,20 +3,29 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Home</title>
+	<title>Checkout</title>
 	<script src="https://js.stripe.com/v3/"></script>
 	<script src="/static/js/checkout.js"></script>
+	<script type="module" src="/static/build/cart-item.js"></script>
+	<link href="/static/build/tw.css" rel="stylesheet">
 </head>
-<body>
-	<form id="payment-form">
-		<div id="payment-element">
-			<!--Stripe.js injects the Payment Element-->
-		</div>
-		<button id="submit">
-			<div class="spinner hidden" id="spinner"></div>
-			<span id="button-text">Pay now</span>
-		</button>
-		<div id="payment-message" class="hidden"></div>
-	</form>
+<body class="bg-slate-900 min-h-screen flex flex-col items-center gap-5 justify-center">
+	<div class="w-1/3 bg-blue-100 rounded-md p-5 min-w-96">
+		<h2 class="text-slate-900 text-lg font-bold mb-5">Cart</h2>
+		<cart-item id="product"></cart-item>
+	</div>
+	<div class="w-1/3 bg-blue-100 rounded-md p-5 min-w-96">
+		<h2 class="text-slate-900 text-lg font-bold mb-5">Payment</h2>
+		<form id="payment-form" class="flex flex-col gap-5">
+			<div id="payment-element">
+				<!--Stripe.js injects the Payment Element-->
+			</div>
+			<button id="submit" class="bg-slate-900 text-blue-100 p-2 mx-auto rounded-md w-1/2">
+				<div class="spinner hidden" id="spinner"></div>
+				<span id="button-text">Pay now</span>
+			</button>
+			<div id="payment-message" class="hidden"></div>
+		</form>
+	</div>
 </body>
 </html>

@@ -5,8 +5,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function submit(e) {
 	let tier = e.target.id.split("-", 2)[1];
-
-	console.log(tier);
+	switch (tier) {
+		case "prem":
+			tier = "premium";
+			break;
+		case "super":
+			tier = "super";
+			break;
+		default:
+			break;
+	}
 
 	const data = {
 		tier: tier
